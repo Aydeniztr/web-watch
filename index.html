@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Watch - Apple-Style Clock</title>
+    <script>
+        // Configure Tailwind to support dark mode
+        window.tailwind?.config?.update?.({
+            darkMode: 'class'
+        });
+        
+        // Initialize dark mode before page renders
+        if (localStorage.getItem('dark-mode') === 'true' || 
+            (!localStorage.getItem('dark-mode') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configure Tailwind for dark mode (class-based)
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'SF Pro Display', sans-serif;
+        }
+
+        .clock-text {
+            font-family: 'SF Mono', Monaco, monospace;
+            letter-spacing: 0.05em;
+        }
+
+        .pulse-dot {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .timer-progress {
+            animation: progressShrink linear forwards;
+        }
+
+        @keyframes progressShrink {
+            to {
+                width: 0%;
+            }
+        }
+
+        .market-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .market-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .bg-market-open {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .dark .bg-market-open-dark {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.08) 100%);
+        }
+
+        .bg-market-closed {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .dark .bg-market-closed-dark {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.08) 100%);
+        }
+
+        .tab-active {
+            border-bottom-width: 2px;
+            border-bottom-color: rgb(0, 0, 0);
+        }
+
+        .dark .tab-active {
+            border-bottom-color: rgb(255, 255, 255);
+        }
+
+        .tab-inactive {
+            border-bottom-width: 2px;
+            border-bottom-color: transparent;
+            opacity: 0.6;
+        }
+
+        .full-screen {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Smooth scrolling for timers */
+        .timers-container {
+            scroll-behavior: smooth;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .dark .glass-effect {
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-open {
+            background-color: rgba(34, 197, 94, 0.1);
+            color: rgb(22, 163, 74);
+        }
+
+        .status-closed {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: rgb(220, 38, 38);
+        }
+
+        .timer-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-white dark:bg-slate-950 transition-colors duration-300">
+    <div id="app" class="min-h-screen flex flex-col">
+        <!-- Navigation Tabs -->
+        <nav class="border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 sticky top-0 z-40 transition-colors duration-300">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex space-x-8">
+                        <button
+                            data-tab="clock"
+                            class="tab-active px-1 py-2 text-sm font-medium text-gray-900 dark:text-white cursor-pointer transition-colors"
+                        >
+                            <i class="fas fa-clock mr-2"></i>Clock & Timers
+                        </button>
+                        <button
+                            data-tab="markets"
+                            class="tab-inactive px-1 py-2 text-sm font-medium text-gray-900 dark:text-white cursor-pointer transition-colors hover:opacity-100"
+                        >
+                            <i class="fas fa-chart-line mr-2"></i>Market Hours
+                        </button>
+                    </div>
+                    
+                    <!-- Dark Mode Toggle -->
+                    <button
+                        id="dark-mode-toggle"
+                        class="p-2 rounded-lg bg-gray-100 dark:bg-slate-800 text-gray-900 dark:text-yellow-400 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors"
+                        title="Toggle dark mode"
+                    >
+                        <i class="fas fa-sun dark:hidden"></i>
+                        <i class="fas fa-moon hidden dark:inline"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Clock & Timers Tab -->
+        <section id="clock-tab" class="flex-1 flex flex-col">
+            <div class="flex-1 flex flex-col items-center justify-center px-4 py-8 bg-gradient-to-br from-gray-50 to-white dark:from-slate-900 dark:to-slate-950 transition-colors duration-300">
+                <!-- Digital Clock -->
+                <div class="text-center">
+                    <div class="mb-8">
+                        <div class="clock-text text-9xl md:text-[150px] font-light tracking-tighter text-gray-900 dark:text-white leading-none" id="digital-clock">
+                            00:00:00
+                        </div>
+                        <div class="mt-4 flex items-center justify-center space-x-2">
+                            <span id="clock-period" class="text-2xl md:text-3xl text-gray-600 dark:text-gray-400 font-light">AM</span>
+                            <button
+                                id="toggle-format"
+                                class="ml-6 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                                title="Toggle 12/24 hour format"
+                            >
+                                24H
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Date Display -->
+                    <p class="text-xl md:text-2xl text-gray-500 dark:text-gray-400 font-light mb-12" id="date-display">
+                        Monday, January 1, 2024
+                    </p>
+                </div>
+            </div>
+
+            <!-- Timers Section -->
+            <div class="px-4 sm:px-6 lg:px-8 py-8 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-700 transition-colors duration-300">
+                <div class="max-w-7xl mx-auto">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white flex items-center">
+                            <i class="fas fa-stopwatch mr-3 text-blue-500"></i>Timers
+                        </h2>
+                        <button
+                            id="add-timer-btn"
+                            class="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                        >
+                            <i class="fas fa-plus"></i>
+                            <span>Add Timer</span>
+                        </button>
+                    </div>
+
+                    <!-- Timers List -->
+                    <div id="timers-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="text-center py-12 col-span-full text-gray-400 dark:text-gray-500">
+                            <i class="fas fa-inbox text-4xl mb-2"></i>
+                            <p class="text-lg">No timers yet. Add one to get started!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Markets Tab -->
+        <section id="markets-tab" class="hidden flex-1 flex flex-col">
+            <div class="px-4 sm:px-6 lg:px-8 py-8 bg-gradient-to-br from-gray-50 to-white dark:from-slate-900 dark:to-slate-950 transition-colors duration-300">
+                <div class="max-w-7xl mx-auto">
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Market Hours</h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-8">Real-time status of global stock markets</p>
+
+                    <!-- Markets Grid -->
+                    <div id="markets-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-max">
+                        <!-- Markets will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Add Timer Modal -->
+    <div id="timer-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 flex items-center justify-center p-4 transition-colors duration-300">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full p-8 slide-in">
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Add New Timer</h3>
+
+            <div class="space-y-4">
+                <!-- Hours Input -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Hours</label>
+                    <input
+                        type="number"
+                        id="timer-hours"
+                        min="0"
+                        max="23"
+                        value="0"
+                        class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    >
+                </div>
+
+                <!-- Minutes Input -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Minutes</label>
+                    <input
+                        type="number"
+                        id="timer-minutes"
+                        min="0"
+                        max="59"
+                        value="1"
+                        class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    >
+                </div>
+
+                <!-- Seconds Input -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Seconds</label>
+                    <input
+                        type="number"
+                        id="timer-seconds"
+                        min="0"
+                        max="59"
+                        value="0"
+                        class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    >
+                </div>
+
+                <!-- Timer Label -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Label (Optional)</label>
+                    <input
+                        type="text"
+                        id="timer-label"
+                        placeholder="e.g., Cooking pasta, Workout..."
+                        class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500 transition-colors"
+                    >
+                </div>
+            </div>
+
+            <!-- Modal Buttons -->
+            <div class="flex space-x-3 mt-8">
+                <button
+                    id="modal-cancel"
+                    class="flex-1 px-4 py-3 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-slate-600 dark:bg-slate-800 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                >
+                    Cancel
+                </button>
+                <button
+                    id="modal-create"
+                    class="flex-1 px-4 py-3 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                >
+                    Create Timer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="clock.js"></script>
+    <script src="timer.js"></script>
+    <script src="markets.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
