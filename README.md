@@ -1,52 +1,57 @@
-# Web Watch - Apple-Styled Clock & Timer App
+# 🕐 Web Watch - Apple-Styled Clock & Timer App
 
 A beautiful, full-featured web-based clock application with timer management and global stock market hours tracking.
 
+## 🚀 Quick Start
+
+Simply open `index.html` in any modern web browser. No installation, no build process required!
+
+```bash
+# macOS
+open index.html
+
+# Windows (PowerShell)
+start index.html
+
+# Linux
+xdg-open index.html
+
+# Or use a Python server
+python3 -m http.server 8080
+# Visit http://localhost:8080 in your browser
+```
+
 ## 🌟 Features
 
-### Clock Display
-- **Full-screen digital clock** with seconds precision
-- **Real-time updates** - synchronized to the second
-- **12/24 hour format toggle** - switch between formats anytime
-- **Current date display** with day of the week
-- **Apple-inspired design** with clean typography and smooth animations
+### ⏰ Full-Featured Clock
+- Real-time digital display with seconds precision
+- 12/24 hour format toggle
+- Current date display with day of the week
+- Apple-inspired design with smooth animations
 
-### Timer Management
-- **Multiple simultaneous timers** - add as many as you need
-- **Custom durations** - set hours, minutes, and seconds
-- **Timer labels** - name your timers (e.g., "Cooking pasta", "Workout")
-- **Play/Pause/Reset controls** - full timer management
-- **Visual progress bar** - see progress at a glance
-- **Sound notification** - audio alert when timer completes
-- **Persistent storage** - timers are saved in browser localStorage
-- **Responsive layout** - stacked cards on mobile, grid on desktop
+### ⏱️ Advanced Timer System
+- Add unlimited simultaneous timers
+- Custom durations (hours, minutes, seconds)
+- Optional labels for each timer
+- Play/Pause/Reset/Delete controls
+- Visual progress bar with animations
+- Audio notification when timer completes
+- Persistent storage (timers survive browser reload!)
 
-### Market Hours Tracker
-- **10 major stock exchanges** monitored in real-time:
-  - 🇹🇷 BIST (Borsa Istanbul)
-  - 🇺🇸 NYSE & NASDAQ (New York)
-  - 🇬🇧 LSE (London Stock Exchange)
-  - 🇪🇺 EURONEXT (Paris, Amsterdam, Brussels)
-  - 🇩🇪 DAX (Deutsche Börse)
-  - 🇭🇰 HKEX (Hong Kong)
-  - 🇯🇵 JSE (Japan)
-  - 🇦🇺 ASX (Australia)
-  - 🇨🇦 TSX (Toronto)
+### 🌍 Global Market Hours Tracker
+- Track 10 major stock exchanges in real-time
+- Live market status (green for open, red for closed)
+- Timezone awareness with accurate times
+- Time to open/close display
+- Beautiful responsive card layout
 
-- **Live market status** - green for open, red for closed
-- **Timezone awareness** - accurate times in each market's local timezone
-- **Time to open/close** - see when markets open or close
-- **Beautiful cards** with color-coded status indicators
-- **Responsive grid layout** - adapts to your screen size
-
-## 🎨 Design
-
-- **Apple-inspired UI** - clean, minimal, professional
-- **Tailwind CSS** - modern, responsive styling
-- **Heroicons & Font Awesome** - professional icon set
-- **Smooth animations** - polished user experience
-- **Dark mode ready** - optimized for readability
-- **Full responsive** - works perfectly on mobile, tablet, and desktop
+### 🎨 Beautiful Design
+- Apple-inspired UI with clean typography
+- Tailwind CSS for modern styling
+- Heroicons & Font Awesome icons
+- Smooth animations and transitions
+- Dark mode support
+- Fully responsive (mobile, tablet, desktop)
 
 ## ⌨️ Keyboard Shortcuts
 
@@ -56,35 +61,6 @@ A beautiful, full-featured web-based clock application with timer management and
 | `Ctrl+1` | Jump to Clock tab |
 | `Ctrl+2` | Jump to Markets tab |
 
-## 🚀 Usage
-
-### Opening the App
-1. Open `index.html` in any modern web browser
-2. No installation or build process required
-3. All resources load from CDN (internet required)
-
-### Adding a Timer
-1. Click the **"+ Add Timer"** button
-2. Enter hours, minutes, and seconds
-3. Optionally add a label (e.g., "Cooking pasta")
-4. Click **"Create Timer"**
-5. Timer appears as a card with play/pause/reset/delete buttons
-
-### Managing Timers
-- **Start/Pause**: Click the play/pause button on any timer
-- **Reset**: Click reset to return to the original duration
-- **Delete**: Click the trash icon to remove a timer
-- Timers are automatically saved to localStorage
-
-### Viewing Market Hours
-1. Click the **"Market Hours"** tab in the navigation
-2. See all major stock exchanges and their current status
-3. Green cards indicate open markets, red indicates closed
-4. Each card shows:
-   - Market name and country
-   - Opening and closing times (in local timezone)
-   - Time until next event (open/close)
-
 ## 📱 Responsive Design
 
 - **Mobile**: Single-column stacked layout
@@ -93,30 +69,30 @@ A beautiful, full-featured web-based clock application with timer management and
 
 ## 💾 Data Persistence
 
-- **Timers** are automatically saved to browser localStorage
-- **Timers persist** across browser refreshes and sessions
-- **No data transmission** - everything stays on your device
+- Timers automatically saved to browser localStorage
+- Timers persist across browser refreshes and sessions
+- No data transmission - everything stays on your device
 
 ## 🔧 Technical Details
 
 ### Stack
-- **HTML5** - semantic markup
-- **CSS3 + Tailwind CSS** - modern, responsive styling via CDN
-- **Vanilla JavaScript (ES6+)** - no frameworks, fast and lightweight
-- **Heroicons & Font Awesome** - icon libraries via CDN
+- **HTML5** - Semantic markup
+- **CSS3 + Tailwind CSS** - Modern styling via CDN
+- **Vanilla JavaScript (ES6+)** - No frameworks
+- **Heroicons & Font Awesome** - Icon libraries via CDN
 
 ### Files
-- `index.html` - Main HTML structure and modals
-- `clock.js` - Real-time clock management
-- `timer.js` - Timer logic and management
-- `markets.js` - Market hours and status tracking
-- `main.js` - App initialization and event handlers
+- `index.html` - Main application
+- `clock.js` - Clock management
+- `timer.js` - Timer logic
+- `markets.js` - Market tracking
+- `main.js` - App initialization
 
 ### No Dependencies
 - Zero npm packages
 - No build step required
 - All assets from CDN
-- Works offline except for market timezone data (which uses browser APIs)
+- Works offline (except market data)
 
 ## 🌐 Browser Support
 
@@ -126,11 +102,41 @@ Works on all modern browsers:
 - Safari 14+
 - Opera 76+
 
-## 🎯 Future Enhancements
+## 📚 Documentation
+
+Full documentation available in the `/docs` folder:
+
+- **[Quick Start Guide](./docs/QUICK_START.md)** - Get started in 3 minutes
+- **[Setup & Usage](./docs/SETUP.md)** - Detailed instructions and troubleshooting
+- **[Features](./docs/FEATURES.md)** - Complete feature breakdown (100+ points)
+- **[Overview](./docs/OVERVIEW.md)** - Project statistics and overview
+- **[Dark Mode Guide](./docs/DARK_MODE.md)** - Dark mode features
+- **[Dark Mode Technical Fix](./docs/DARK_MODE_FIX.md)** - Technical details
+
+## 🎯 Use Cases
+
+- **Kitchen**: Cooking timers for pasta, eggs, baking
+- **Work**: Meeting reminders, Pomodoro time management
+- **Fitness**: Workout interval timers, rest periods
+- **Trading**: Stock market hours tracking
+- **Study**: Focus intervals, study sessions
+
+## ✨ Highlights
+
+✅ No login required  
+✅ No tracking or analytics  
+✅ No ads  
+✅ Completely free  
+✅ Open source (you have the code)  
+✅ Works offline  
+✅ Mobile-friendly  
+✅ Professional quality  
+✅ Production-ready  
+
+## 🚀 Future Enhancements
 
 - Voice timer announcements
 - Multiple alarm sounds
-- Dark mode toggle
 - Timezone selection
 - Stopwatch mode
 - Pomodoro timer presets
@@ -154,6 +160,8 @@ Free to use and modify!
 **Clock or timers not updating?**
 - Refresh the page
 - Check browser console for errors (F12)
+
+For more troubleshooting, see [SETUP.md](./docs/SETUP.md#-troubleshooting).
 
 ---
 
