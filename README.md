@@ -1,4 +1,4 @@
-# 🕐 Web Watch - Apple-Styled Clock & Timer App
+# 🕐 Web Watch - Market Clock & Timer App
 
 A beautiful, full-featured web-based clock application with timer management and global stock market hours tracking.
 
